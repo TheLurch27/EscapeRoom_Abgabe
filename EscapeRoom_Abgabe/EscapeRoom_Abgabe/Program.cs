@@ -21,10 +21,10 @@
             #region Key Assignment
             Console.WriteLine("Movement: ");
             Console.WriteLine("");
-            Console.WriteLine("Up    = ↑ or W");
-            Console.WriteLine("Left  = Computer says no... Think of the left arrow at this point)");
-            Console.WriteLine("Down  = ↓ or S");
-            Console.WriteLine("Right = → or D");
+            Console.WriteLine("Up    = W or ↑");
+            Console.WriteLine("Left  = A or Computer says no... Think of the left arrow at this point)");
+            Console.WriteLine("Down  = S or ↓");
+            Console.WriteLine("Right = D or →");
             Console.WriteLine("");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Press a button to continue");
@@ -36,11 +36,11 @@
             #region Instructions
             Console.WriteLine("Instructions: ");
             Console.WriteLine();
-            Console.WriteLine("Move the Character ");
+            Console.Write("Move the Character ");
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.Write("':)' ");
+            Console.WriteLine("':)' ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Collect the Key ");
+            Console.Write("Collect the Key ");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("'O┤' ");
             Console.ForegroundColor = ConsoleColor.White;
@@ -53,44 +53,43 @@
             Console.Clear();
             #endregion
 
-            int length = GetValidRoomDimension("Enter the length of the room (5-30):", 5, 30);
-            int width = GetValidRoomDimension("Enter the width of the room (5-30):", 5, 30);
+            int length = GetValidRoomSize("Enter the length of the room (5-30):", 5, 30);
+            int width = GetValidRoomSize("Enter the width of the room (5-30):", 5, 30);
 
-            InitializeRoom(length, width);
-            PlaceObjects();
+            CreateRoom(length, width);
+            SetObjects();
 
-            DrawRoom();
+            RenderRoom();
 
             while (true)
             {
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                MovePlayer(keyInfo.Key);
-                DrawRoom();
+                PlayerMovement(keyInfo.Key);
+                RenderRoom();
 
                 if (playerX == doorX && playerY == doorY && hasKey)
                 {
-                    DisplayWinningMessage();
+                    WinningMessage();
                     break;
                 }
             }
         }
 
         /// <summary>
-        /// Fordert den Spieler auf, die Länge oder Breite des Raums einzugeben und überprüft die Gültigkeit der Eingabe.
+        /// Hier wird man aufgefordert die Größe des Raums einzugeben. Das Programm überprüft ob die Eingabe Richtig war.
         /// </summary>
-        /// <param name="message">Die Meldung, die den Spieler zur Eingabe auffordert.</param>
-        /// <param name="minValue">Der minimale Wert für die Raumdimension.</param>
-        /// <param name="maxValue">Der maximale Wert für die Raumdimension.</param>
-        /// <returns>Die gültige Raumdimension, die vom Spieler eingegeben wurde.</returns>
-
+        /// <param name="message">Die Meldung die den Spieler zur Eingabe auffordert.</param>
+        /// <param name="minValue">Die mind. Größe des Raums.</param>
+        /// <param name="maxValue">Der max. Größe des Raums.</param>
+        /// <returns>Die Richtige Raum Größe die vom Spieler eingegeben wird.</returns>
         #region GetValidRoomDimension
-        static int GetValidRoomDimension(string message, int minValue, int maxValue)
+        static int GetValidRoomSize(string message, int minValue, int maxValue)
         {
-            int dimension;
+            int size;
             while (true)
             {
                 Console.WriteLine(message);
-                if (!int.TryParse(Console.ReadLine(), out dimension) || dimension < minValue || dimension > maxValue)
+                if (!int.TryParse(Console.ReadLine(), out size) || size < minValue || size > maxValue)
                 {
                     Console.Clear();
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -102,13 +101,20 @@
                 }
                 else
                 {
-                    return dimension;
+                    return size;
                 }
             }
         }
         #endregion
 
-        static void InitializeRoom(int length, int width)
+        /// <summary>
+        /// Diese Methode fügt dem Raum Wände und Boden hinzu.
+        /// </summary>
+        /// <param name="length">Das ist die Länge des Raums.</param>
+        /// <param name="width">Das ist die Breite des Raums.</param>
+        /// 
+        #region InitalizeRoom
+        static void CreateRoom(int length, int width)
         {
             room = new string[length, width];
             for (int i = 0; i < length; i++)
@@ -119,8 +125,13 @@
                 }
             }
         }
+        #endregion
 
-        static void PlaceObjects()
+        /// <summary>
+        /// Hier werden Spieler, Schlüssel und Tür zufällig im Raum platziert.
+        /// </summary>
+        #region SetObjects
+        static void SetObjects()
         {
             Random random = new Random();
             playerX = random.Next(1, room.GetLength(0) - 1);
@@ -141,8 +152,13 @@
             }
             room[doorX, doorY] = "▓▓"; // Door
         }
+        #endregion
 
-        static void DrawRoom()
+        /// <summary>
+        /// Diese Methode löscht die Konsole und zeichnet den aktuellen Raumzustand auf dem Bildschirm.
+        /// </summary>
+        #region RenderRoom
+        static void RenderRoom()
         {
             Console.Clear();
             for (int i = 0; i < room.GetLength(0); i++)
@@ -154,8 +170,14 @@
                 Console.WriteLine();
             }
         }
+        #endregion
 
-        static void MovePlayer(ConsoleKey direction)
+        /// <summary>
+        /// Diese Methode sorgt für die Spieler Bewegung (Tastenbelegung)
+        /// </summary>
+        /// <param name="direction">Hier wird angegeben in welche Richtung der Spieler bewegt werden soll.</param>
+        #region PlayerMovement
+        static void PlayerMovement(ConsoleKey direction)
         {
             int newX = playerX, newY = playerY;
             switch (direction)
@@ -169,29 +191,39 @@
             if (newX < 0 || newX >= room.GetLength(0) || newY < 0 || newY >= room.GetLength(1)) return;
             if (room[newX, newY] == "██") return;
             if (room[newX, newY] == "▓▓" && !hasKey) return;
-            if (room[newX, newY] == "O┤") { hasKey = true; room[newX, newY] = "  "; RemoveDoor(); }
+            if (room[newX, newY] == "O┤") { hasKey = true; room[newX, newY] = "  "; } //RemoveDoor(); }
             room[playerX, playerY] = "  ";
             playerX = newX;
             playerY = newY;
             room[playerX, playerY] = ":)";
         }
+        #endregion
 
-        static void RemoveDoor()
-        {
-            for (int i = 0; i < room.GetLength(0); i++)
-            {
-                for (int j = 0; j < room.GetLength(1); j++)
-                {
-                    if (room[i, j] == "▓▓")
-                    {
-                        room[i, j] = "  ";
-                        return;
-                    }
-                }
-            }
-        }
+        /// <summary>
+        /// Nachdem der Spieler den Schlüssel eingesammelt hat wird die Tür aus dem Raum entfernt.
+        /// </summary>
+        #region RemoveDoor
+        //static void RemoveDoor()
+        //{
+        //    for (int i = 0; i < room.GetLength(0); i++)
+        //    {
+        //        for (int j = 0; j < room.GetLength(1); j++)
+        //        {
+        //            if (room[i, j] == "▓▓")
+        //            {
+        //                room[i, j] = "  ";
+        //                return;
+        //            }
+        //        }
+        //    }
+        //}
+        #endregion
 
-        static void DisplayWinningMessage()
+        /// <summary>
+        /// Hier wird eine Nachricht angezeigt dass das Spiel gewonnen wurde. Das Spiel wird danach beendet.
+        /// </summary>
+        #region WinningMessage
+        static void WinningMessage()
         {
             Console.Clear();
             Console.WriteLine("Herzlichen Glückwunsch! Sie haben das Spiel gewonnen!");
@@ -199,5 +231,6 @@
             Console.ReadKey();
             Environment.Exit(0);
         }
+        #endregion
     }
 }
