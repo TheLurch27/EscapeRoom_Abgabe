@@ -8,18 +8,32 @@
 
         static void Main(string[] args)
         {
+            #region Welcome Message
             Console.WriteLine("Welcome to the game!");
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Press a button to continue");
+            Console.ForegroundColor = ConsoleColor.White;
             Console.ReadLine();
             Console.Clear();
+            #endregion
 
+            #region Key Assignment
             Console.WriteLine("Movement: ");
             Console.WriteLine("");
-            Console.Write("Up    = ↑ or W");
-            Console.Write("Left  = ← or A");
-            Console.Write("Down  = ↓ or S");
-            Console.Write("Right = → or D");
+            Console.WriteLine("Up    = ↑ or W");
+            Console.WriteLine("Left  = Computer says no... Think of the left arrow at this point)");
+            Console.WriteLine("Down  = ↓ or S");
+            Console.WriteLine("Right = → or D");
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Press a button to continue");
+            Console.ForegroundColor = ConsoleColor.White;
             Console.ReadKey();
             Console.Clear();
+            #endregion
+
+            #region Instructions
             Console.WriteLine("Instructions: ");
             Console.WriteLine();
             Console.WriteLine("Move the Character ");
@@ -31,8 +45,13 @@
             Console.WriteLine("'O┤' ");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("and open the door to win.");
+            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Press a button to continue");
+            Console.ForegroundColor = ConsoleColor.White;
             Console.ReadLine();
             Console.Clear();
+            #endregion
 
             int length = GetValidRoomDimension("Enter the length of the room (5-30):", 5, 30);
             int width = GetValidRoomDimension("Enter the width of the room (5-30):", 5, 30);
