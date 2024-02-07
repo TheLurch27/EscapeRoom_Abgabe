@@ -5,6 +5,7 @@
         static string[,] room;
         static int playerX, playerY, keyX, keyY, doorX, doorY;
         static bool hasKey = false;
+        static bool shouldRender = true;
 
         static void Main(string[] args)
         {
@@ -53,8 +54,8 @@
             Console.Clear();
             #endregion
 
-            int length = GetValidRoomSize("Enter the length of the room (5-30):", 5, 30);
-            int width = GetValidRoomSize("Enter the width of the room (5-30):", 5, 30);
+            int length = GetValidRoomSize("Enter the length of the room (5-25):", 5, 25);
+            int width = GetValidRoomSize("Enter the width of the room (5-25):", 5, 25);
 
             CreateRoom(length, width);
             SetObjects();
@@ -63,15 +64,26 @@
 
             while (true)
             {
-                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                PlayerMovement(keyInfo.Key);
-                RenderRoom();
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    PlayerMovement(keyInfo.Key);
+                    shouldRender = true; // Setze shouldRender auf true, um die Konsole neu zu rendern
+                }
+
+                if (shouldRender)
+                {
+                    RenderRoom();
+                    shouldRender = false; // Setze shouldRender auf false, um die Konsole nicht wiederholt neu zu rendern
+                }
 
                 if (playerX == doorX && playerY == doorY && hasKey)
                 {
                     WinningMessage();
                     break;
                 }
+
+                Thread.Sleep(50); // Verzögerung, um die Aktualisierung zu verlangsamen und Ruckeln zu reduzieren
             }
         }
 
@@ -160,11 +172,20 @@
         #region RenderRoom
         static void RenderRoom()
         {
-            Console.Clear();
+            Console.SetCursorPosition(0, 0); // Setze den Cursor an den Anfang der Konsole, um die gesamte Karte neu zu zeichnen.
+
             for (int i = 0; i < room.GetLength(0); i++)
             {
                 for (int j = 0; j < room.GetLength(1); j++)
                 {
+                    if (i == playerX && j == playerY)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
                     Console.Write(room[i, j]);
                 }
                 Console.WriteLine();
