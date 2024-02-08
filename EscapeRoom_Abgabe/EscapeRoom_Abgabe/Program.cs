@@ -93,12 +93,12 @@ namespace EscapeRoom_Abgabe
         }
 
         /// <summary>
-        /// Die Methode überprüft ob die Eingabe Richtig war.
+        /// The method checks if the input was correct
         /// </summary>
-        /// <param name="message">Die Meldung die den Spieler zur Eingabe auffordert.</param>
-        /// <param name="minValue">Die mind. Größe des Raums.</param>
-        /// <param name="maxValue">Der max. Größe des Raums.</param>
-        /// <returns>Die Richtige Raum Größe die vom Spieler eingegeben wird.</returns>
+        /// <param name="message">The message tells the player to make an input</param>
+        /// <param name="minValue">The minimum size of the room</param>
+        /// <param name="maxValue">The maximum size of the room.</param>
+        /// <returns>The correct room size entered by the player.</returns>
         #region GetValidRoomDimension
         static int GetValidRoomSize(string message, int minValue, int maxValue)
         {
@@ -127,10 +127,10 @@ namespace EscapeRoom_Abgabe
         #endregion
 
         /// <summary>
-        /// Diese Methode fügt dem Raum Wände und Boden hinzu.
+        /// This method adds walls and floor to the room.
         /// </summary>
-        /// <param name="length">Das ist die Länge des Raums.</param>
-        /// <param name="width">Das ist die Breite des Raums.</param>
+        /// <param name="length">This is the length of the room</param>
+        /// <param name="width">This is the width of the room</param>
         /// 
         #region InitalizeRoom
         static void CreateRoom(int length, int width)
@@ -156,36 +156,36 @@ namespace EscapeRoom_Abgabe
         #endregion
 
         /// <summary>
-        /// Hier werden Spieler, Schlüssel und Tür zufällig im Raum platziert.
+        /// In this method, the player, key and door are placed randomly in the room
         /// </summary>
         #region SetObjects
         static void SetObjects()
         {
             Random random = new Random();
-            playerX = random.Next(1, room.GetLength(0) - 1); // Hier wird eine Zufällige X-Koordinate gewählt
-            playerY = random.Next(1, room.GetLength(1) - 1); // Das selbe mit der Y Koordinate
-            room[playerX, playerY] = ":)"; // <- Um den kleinen Kerl hier zu Platzieren
+            playerX = random.Next(1, room.GetLength(0) - 1); // A random X coordinate is selected here
+            playerY = random.Next(1, room.GetLength(1) - 1); // The same with the Y coordinate
+            room[playerX, playerY] = ":)"; // <- To place the little guy here
 
             keyX = random.Next(1, room.GetLength(0) - 1);
             keyY = random.Next(1, room.GetLength(1) - 1);
             room[keyX, keyY] = "O┤";
 
-            int side = random.Next(4); // Es wird eine Zufällige Wand (bzw ein zufälliger Case) gewählt auf diese am ende dann die Tür platziert wird
+            int side = random.Next(4); // A random wall (or a random case) is selected on which the door is then placed at the end
             switch (side)
             {
-                case 0: // Wand - Oben
+                case 0: // Wall - Top
                     doorX = 0;
                     doorY = random.Next(1, room.GetLength(1) - 1);
                     break;
-                case 1: // Wand - Rechts
+                case 1: // Wall - Right
                     doorX = random.Next(1, room.GetLength(0) - 1);
                     doorY = room.GetLength(1) - 1;
                     break;
-                case 2: // Wand - Unten
+                case 2: // Wall - Bottom
                     doorX = room.GetLength(0) - 1;
                     doorY = random.Next(1, room.GetLength(1) - 1);
                     break;
-                case 3: // Wand - Links
+                case 3: // Wall - Left
                     doorX = random.Next(1, room.GetLength(0) - 1);
                     doorY = 0;
                     break;
@@ -195,18 +195,18 @@ namespace EscapeRoom_Abgabe
         #endregion
 
         /// <summary>
-        /// Diese Methode sorgt dafür das der Raum dargestellt wird.
+        /// This method ensures that the room is displayed
         /// </summary>
         #region RenderRoom
         static void RenderRoom()
         {
             Console.SetCursorPosition(0, 0);
 
-            for (int i = 0; i < room.GetLength(0); i++) // Das Programm läuft durch alle Zeilen
+            for (int i = 0; i < room.GetLength(0); i++) // The program runs through all lines
             {
-                for (int j = 0; j < room.GetLength(1); j++) // Genauso durch alle Spalten
+                for (int j = 0; j < room.GetLength(1); j++) // In the same way through all columns
                 {
-                    if (i == playerX && j == playerY) // Hier wird überprüft ob die Aktuelle Position die selbe ist wie vom Character
+                    if (i == playerX && j == playerY) // This checks if the current position is the same as that of the character
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                     }
@@ -214,7 +214,7 @@ namespace EscapeRoom_Abgabe
                     {
                         Console.ForegroundColor = ConsoleColor.White;
                     }
-                    Console.Write(room[i, j]); // Hier werden die Zeichen an der jeweiligen Position vergeben
+                    Console.Write(room[i, j]); // The characters are assigned to the respective position here
                 }
                 Console.WriteLine();
             }
@@ -222,9 +222,9 @@ namespace EscapeRoom_Abgabe
         #endregion
 
         /// <summary>
-        /// Diese Methode sorgt für die Spieler Bewegung (Tastenbelegung)
+        /// This method provides the player movement (key assignment)
         /// </summary>
-        /// <param name="direction">Hier wird angegeben in welche Richtung der Spieler bewegt werden soll.</param>
+        /// <param name="direction">The direction in which the player is to be moved is specified here</param>
         #region PlayerMovement
         static void PlayerMovement(ConsoleKey direction)
         {
@@ -266,16 +266,16 @@ namespace EscapeRoom_Abgabe
         #endregion
 
         /// <summary>
-        /// Der Schlüssel wird an der ensprechenden Stelle durch einen Boden ersetzt.
+        /// The key is replaced by a floor at the corresponding position
         /// </summary>
-        /// <param name="x">Die X-Koordinate vom Schlüssels im Raum.</param>
-        /// <param name="y">Die Y-Koordinate vom Schlüssels im Raum.</param>
+        /// <param name="x">The X-coordinate of the key in the room</param>
+        /// <param name="y">The Y-coordinate of the key in the room</param>
         #region RemoveKey
         static void RemoveKey(int x, int y)
         {
-            if (x >= 0 && x < room.GetLength(0) && y >= 0 && y < room.GetLength(1)) // Es wird gecheckt ob die Koordinate innerhalb des Raumes liegt
+            if (x >= 0 && x < room.GetLength(0) && y >= 0 && y < room.GetLength(1)) // It is checked whether the coordinate is within the room
             {
-                room[x, y] = "  "; // Der Schlüssel wird aus dem Raum entfernt und durch einen Boden ersetzt
+                room[x, y] = "  "; // The key is removed from the room and replaced with a floor
             }
         }
         #endregion
